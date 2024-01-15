@@ -81,6 +81,7 @@ public class Settings {
 
     public class ShineTable {
         public bool Enabled { get; set; } = true;
+        public bool ClearOnNewSaves { get; set; } = false;
     }
 
     public class PersistShinesTable
