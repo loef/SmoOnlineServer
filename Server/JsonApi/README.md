@@ -7,8 +7,6 @@ to fill up and exactly match a complete normal game packet header (to identify a
 
 A complete request can have a size of up to 512 characters (arbitrary limit that could be increased if needed).
 
-The first 22 bytes of binary data returned from the server (`InitPacket`) need to be ignored to parse the rest as valid JSON.
-
 ---
 
 Every request to the server needs to be authorized by containing a secret token.
