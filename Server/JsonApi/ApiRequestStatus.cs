@@ -137,10 +137,9 @@ public static class ApiRequestStatus {
 
 
         private static bool? GetTagged(Client c) {
-            object? lastTagPacket = null;
-            c.Metadata.TryGetValue("lastTagPacket", out lastTagPacket);
-            if (lastTagPacket == null) { return null; }
-            return ((TagPacket) lastTagPacket).IsIt;
+            object? seeking = null;
+            c.Metadata.TryGetValue("seeking", out seeking);
+            return (bool?) seeking;
         }
 
 
