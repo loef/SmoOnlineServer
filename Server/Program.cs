@@ -463,13 +463,18 @@ CommandHandler.RegisterCommand("tag", args => {
                 return $"Invalid time for seconds {args[3]} (range: 0-59)";
             TagPacket tagPacket = new TagPacket {
                 UpdateType = TagPacket.TagUpdate.Time,
-                Minutes = minutes,
-                Seconds = seconds
+                Minutes    = minutes,
+                Seconds    = seconds,
             };
-            if (args[1] == "*")
-                server.Broadcast(tagPacket);
-            else
-                client?.Send(tagPacket);
+            if (args[1] == "*") {
+                Parallel.ForEachAsync(server.Clients, async (client, _) => {
+                    await server.Broadcast(tagPacket, client);
+                    await client.Send(tagPacket);
+                });
+            } else if (client != null) {
+                server.Broadcast(tagPacket, client);
+                client.Send(tagPacket);
+            }
             return $"Set time for {(args[1] == "*" ? "everyone" : args[1])} to {minutes}:{seconds}";
         }
         case "seeking" when args.Length == 3: {
@@ -478,12 +483,17 @@ CommandHandler.RegisterCommand("tag", args => {
             if (!bool.TryParse(args[2], out bool seeking)) return $"Usage: tag seeking {args[1]} <true/false>";
             TagPacket tagPacket = new TagPacket {
                 UpdateType = TagPacket.TagUpdate.State,
-                IsIt = seeking
+                IsIt       = seeking,
             };
-            if (args[1] == "*")
-                server.Broadcast(tagPacket);
-            else
-                client?.Send(tagPacket);
+            if (args[1] == "*") {
+                Parallel.ForEachAsync(server.Clients, async (client, _) => {
+                    await server.Broadcast(tagPacket, client);
+                    await client.Send(tagPacket);
+                });
+            } else if (client != null) {
+                server.Broadcast(tagPacket, client);
+                client.Send(tagPacket);
+            }
             return $"Set {(args[1] == "*" ? "everyone" : args[1])} to {(seeking ? "seeker" : "hider")}";
         }
         case "start" when args.Length > 2: {
@@ -497,17 +507,22 @@ CommandHandler.RegisterCommand("tag", args => {
                 int realTime = 1000 * time;
                 await Task.Delay(realTime);
                 await Task.WhenAll(
-                    Parallel.ForEachAsync(seekers, async (seeker, _) =>
-                        await server.Broadcast(new TagPacket {
+                    Parallel.ForEachAsync(seekers, async (seeker, _) => {
+                        TagPacket packet = new TagPacket {
                             UpdateType = TagPacket.TagUpdate.State,
-                            IsIt = true
-                        }, seeker)),
-                    Parallel.ForEachAsync(server.Clients.Except(seekers), async (hider, _) =>
-                        await server.Broadcast(new TagPacket {
+                            IsIt       = true,
+                        };
+                        await server.Broadcast(packet, seeker);
+                        await seeker.Send(packet);
+                    }),
+                    Parallel.ForEachAsync(server.Clients.Except(seekers), async (hider, _) => {
+                        TagPacket packet = new TagPacket {
                             UpdateType = TagPacket.TagUpdate.State,
-                            IsIt = false
-                        }, hider)
-                    )
+                            IsIt       = false,
+                        };
+                        await server.Broadcast(packet, hider);
+                        await hider.Send(packet);
+                    })
                 );
                 consoleLogger.Info($"Started game with seekers {string.Join(", ", seekerNames)}");
             });
