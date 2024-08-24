@@ -29,13 +29,14 @@ RUN  dotnet  publish  \
     --self-contained  \
     -p:publishSingleFile=true  \
 ;
-RUN chmod 777 data/*
 
 ##################################################################   build   ###
 ################################################################################
 ################################################################   runtime   ###
 
 FROM  mcr.microsoft.com/dotnet/runtime:6.0  as  runtime
+
+
 
 USER container
 ENV  USER=container HOME=/home/container
@@ -45,6 +46,7 @@ COPY  --from=build  /app/out/  /app/
 
 ENTRYPOINT  [ "/app/Server" ]
 EXPOSE      1027/tcp
+RUN chmod 777 data/*
 WORKDIR     /home/container/data/
 VOLUME      /home/container/data/
 
