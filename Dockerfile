@@ -46,7 +46,6 @@ COPY  --from=build  /app/out/  /app/
 
 ENTRYPOINT  [ "/app/Server" ]
 EXPOSE      1027/tcp
-RUN chmod 777 data/*;
 WORKDIR     /home/container/data/
 VOLUME      /home/container/data/
 
