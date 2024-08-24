@@ -36,7 +36,9 @@ RUN  dotnet  publish  \
 
 FROM  mcr.microsoft.com/dotnet/runtime:6.0  as  runtime
 
-RUN chmod 777 /home/container/data/
+RUN mkdir /home/container/data/
+    chmod 777 /home/container/data/
+    ;
 
 USER container
 ENV  USER=container HOME=/home/container
