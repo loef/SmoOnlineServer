@@ -44,7 +44,9 @@ ENV  USER=container HOME=/home/container
 # Copy application binary from build stage
 COPY  --from=build  /app/out/  /app/
 
-RUN         chmod +w data/
+RUN mkdir -p data && \
+    chmod +w data
+
 ENTRYPOINT  [ "/app/Server" ]
 EXPOSE      1027/tcp
 WORKDIR     /home/container/data/
