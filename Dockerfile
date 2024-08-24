@@ -3,10 +3,6 @@
 
 FROM  --platform=linux/amd64  mcr.microsoft.com/dotnet/sdk:6.0  as  build
 
-
-USER container
-ENV  USER=container HOME=/home/container
-
 WORKDIR  /home/container
 
 COPY  ./Shared/Shared.csproj  ./Shared/Shared.csproj
