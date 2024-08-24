@@ -53,8 +53,7 @@ ENV  USER=container HOME=/home/container
 # Ensure the data directory exists and set permissions
 RUN mkdir -p /home/container/data && \
     chown -R container:container /home/container/data && \
-    chmod -R 770 /home/container/data && \
-    touch /home/container/data/settings.json
+    chmod -R 770 /home/container/data
 
 ENTRYPOINT  [ "/app/Server" ]
 EXPOSE      1027/tcp
