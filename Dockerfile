@@ -36,6 +36,8 @@ RUN  dotnet  publish  \
 
 FROM  mcr.microsoft.com/dotnet/runtime:6.0  as  runtime
 
+RUN adduser --disabled-password --home /home/container container
+
 USER container
 ENV  USER=container HOME=/home/container
 
