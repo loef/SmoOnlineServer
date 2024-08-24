@@ -36,16 +36,22 @@ RUN  dotnet  publish  \
 
 FROM  mcr.microsoft.com/dotnet/runtime:6.0  as  runtime
 
-RUN adduser --disabled-password --home /home/container container
+# Create the user and group 'container'
+RUN groupadd -r container && \
+    useradd -r -g container -d /home/container -m container
 
-USER container
-ENV  USER=container HOME=/home/container
+# Set the working directory to /home/container
+WORKDIR /home/container
 
 # Copy application binary from build stage
 COPY  --from=build  /app/out/  /app/
 
-RUN mkdir -p data && \
-    chmod +w data
+# Temporarily commenting out the USER container for debugging
+# USER container
+ENV  USER=container HOME=/home/container
+
+# Ensure the data directory exists and set permissions with verbose output
+RUN mkdir -p data && chmod -v +w data
 
 ENTRYPOINT  [ "/app/Server" ]
 EXPOSE      1027/tcp
