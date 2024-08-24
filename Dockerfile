@@ -50,15 +50,10 @@ COPY  --from=build  /app/out/  /app/
 USER container
 ENV  USER=container HOME=/home/container
 
-# Ensure the data directory exists and set permissions
-RUN mkdir -p /home/container/data && \
-    chown -R container:container /home/container/data && \
-    chmod -R 770 /home/container/data
-
 ENTRYPOINT  [ "/app/Server" ]
 EXPOSE      1027/tcp
-WORKDIR     /home/container/data/
-VOLUME      /home/container/data/
+WORKDIR     /home/container
+VOLUME      /home/container
 
 ################################################################   runtime   ###
 ################################################################################
