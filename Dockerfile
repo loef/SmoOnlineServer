@@ -46,12 +46,14 @@ WORKDIR /home/container
 # Copy application binary from build stage
 COPY  --from=build  /app/out/  /app/
 
-# Temporarily commenting out the USER container for debugging
-# USER container
+# Set the USER before creating the directory to ensure it's owned by the container user
+USER container
 ENV  USER=container HOME=/home/container
 
-# Ensure the data directory exists and set permissions with verbose output
-RUN mkdir -p data && chmod -v +w data
+# Ensure the data directory exists and set permissions
+RUN mkdir -p /home/container/data && \
+    chown -R container:container /home/container/data && \
+    chmod -R 770 /home/container/data
 
 ENTRYPOINT  [ "/app/Server" ]
 EXPOSE      1027/tcp
